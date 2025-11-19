@@ -22,8 +22,8 @@ def load_regencies(province_code):
     url = f"https://wilayah.id/api/regencies/{province_code}.json"
     res = requests.get(url).json()
     return res["data"]
-
-API_BASE = st.secrets.get("API_BASE", "http://backend:8000")  # in docker compose, backend service name
+ # in docker compose, backend service name
+API_BASE = st.secrets["API_BASE"]
 
 st.set_page_config(layout="wide", page_title="Fraud Triage Demo")
 
@@ -201,7 +201,7 @@ if submitted:
     }
     
     with st.spinner("Evaluating risk..."):
-        response = requests.post("http://127.0.0.1:8000/score_single", json=payload)
+        response = requests.post(f"{API_BASE}/score_single", json=payload)
 
     if response.status_code == 200:
         predictions = response.json()["predictions"]
@@ -295,7 +295,7 @@ uploaded = st.file_uploader("Upload scored parquet/csv (or use demo)", type=["pa
 if uploaded:
     with st.spinner("⏳ Mengirim ke backend untuk scoring..."):
         files = {"file": (uploaded.name, uploaded.getvalue())}
-        response = requests.post("http://127.0.0.1:8000/batch_score", files=files)
+        response = requests.post(f"{API_BASE}/batch_score", files=files)
 
     if response.status_code != 200:
         st.error("Gagal memproses batch.")

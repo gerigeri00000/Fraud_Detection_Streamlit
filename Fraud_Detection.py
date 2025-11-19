@@ -169,7 +169,7 @@ if submitted:
         "jenis_pelayanan": jenis_pelayanan,
         "room_class": room_class,
         "lama_dirawat": lama_dirawat,
-        "time_diff_prev_claim": 10,
+        "time_diff_prev_claim": time_diff_prev_claim,
         
 
         # Financial Data
@@ -178,14 +178,14 @@ if submitted:
         "selisih_klaim": selisih_klaim,
         "drug_cost": drug_cost,
         "procedure_cost": procedure_cost,
-        "tarif_inacbg": 10000000,
-        "rolling_avg_cost_30d": 8000000,
-        "provider_monthly_claims": 150,
-        "claim_month" : 11,
-        'claim_quarter': 4,
+        "tarif_inacbg": tarif_inacbg,
+        "rolling_avg_cost_30d": rolling_avg_cost_30d,
+        "provider_monthly_claims": provider_monthly_claims,
+        "claim_month" : claim_month,
+        'claim_quarter': claim_quarter,
 
         # Behavioral Metrics
-        "clinical_pathway_deviation_score": 0.3,
+        "clinical_pathway_deviation_score": clinical_pathway_deviation_score,
         "visit_count_30d": visit_count_30d,
         "kapitasi_flag": kapitasi_flag,
         "referral_flag": referral_flag,

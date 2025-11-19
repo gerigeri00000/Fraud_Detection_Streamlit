@@ -114,6 +114,69 @@ if uploaded:
 
             else:
                 st.warning("Faskes tidak ditemukan dalam graf.")
+            with st.spinner("Mengirim file ke backend dan memproses..."):
+            # kirim file dalam multipart/form-data
+                files = {"file": (uploaded.name, uploaded.getvalue(), "text/csv")}
+                try:
+                    response = requests.post(f"{API_BASE}/inference_graph", files=files)
+                except Exception as e:
+                    st.error(f"Request error: {e}")
+                    st.stop()
+                    
+                if response.status_code != 200:
+                    st.error("Server error: " + response.text)
+                    st.stop()
+                    
+                result = response.json()
+                print(result)
+
+                predictions_url = API_BASE + result["predictions_url"]
+                explanations_url = API_BASE + result["explanations_url"]
+                report_url = API_BASE + result["report_url"]
+
+                # =============================
+                # 1. LOAD & DISPLAY EXPLANATIONS (JSON)
+                # =============================
+                st.subheader("📌 Explanation Results")
+                exp_response = requests.get(explanations_url)
+                explanations = exp_response.json()
+
+                for item in explanations:
+                    st.markdown(f"### Claim ID: `{item['claim_id']}` — Prediction: **{item['prediction']}** ({item['confidence']*100:.1f}%)")
+                    
+                    st.markdown("#### 🧠 Reasoning Trace")
+                    for step in item["schema"]["reasoning_trace"]:
+                        st.markdown(f"- {step}")
+
+                    st.markdown("#### 🔗 Important Edges")
+                    st.json(item["schema"]["explainer_results"]["important_edges"])
+
+                    st.markdown("#### 🧩 Important Features")
+                    st.json(item["schema"]["explainer_results"]["important_features"])
+
+                    st.markdown("#### 📖 Narrative Explanation")
+                    st.markdown(item["narrative"])
+
+                    st.markdown("---")
+
+
+                # =============================
+                # 2. LOAD & DISPLAY REPORT (TXT)
+                # =============================
+                report_response = requests.get(report_url)
+                report_text = report_response.text
+
+                st.text_area("Report", report_text, height=400)
+
+                # =============================
+                # 3. LOAD & DISPLAY PREDICTIONS CSV
+                # =============================
+                st.subheader("📊 Predictions Table (CSV)")
+
+                df = pd.read_csv(predictions_url)   # CSV bisa langsung load dari URL
+                st.dataframe(df)
+
+                st.success("Inference Completed!")
         # selected_node = f"FSK_{selected_faskes}"
         # subG = nx.ego_graph(G, selected_node, radius=2)
         
@@ -129,70 +192,8 @@ if uploaded:
         st.error("❌ CSV tidak bisa dibaca. Pastikan file CSV valid dan menggunakan delimiter koma / titik koma.")
         st.stop()
 
-    if st.button("Proses Inference"):
-        with st.spinner("Mengirim file ke backend dan memproses..."):
-            # kirim file dalam multipart/form-data
-            files = {"file": (uploaded.name, uploaded.getvalue(), "text/csv")}
-            try:
-                response = requests.post(f"{API_BASE}/inference_graph", files=files)
-            except Exception as e:
-                st.error(f"Request error: {e}")
-                st.stop()
-                
-            if response.status_code != 200:
-                st.error("Server error: " + response.text)
-                st.stop()
-                
-            result = response.json()
-            print(result)
-
-            predictions_url = API_BASE + result["predictions_url"]
-            explanations_url = API_BASE + result["explanations_url"]
-            report_url = API_BASE + result["report_url"]
-
-            # =============================
-            # 1. LOAD & DISPLAY EXPLANATIONS (JSON)
-            # =============================
-            st.subheader("📌 Explanation Results")
-            exp_response = requests.get(explanations_url)
-            explanations = exp_response.json()
-
-            for item in explanations:
-                st.markdown(f"### Claim ID: `{item['claim_id']}` — Prediction: **{item['prediction']}** ({item['confidence']*100:.1f}%)")
-                
-                st.markdown("#### 🧠 Reasoning Trace")
-                for step in item["schema"]["reasoning_trace"]:
-                    st.markdown(f"- {step}")
-
-                st.markdown("#### 🔗 Important Edges")
-                st.json(item["schema"]["explainer_results"]["important_edges"])
-
-                st.markdown("#### 🧩 Important Features")
-                st.json(item["schema"]["explainer_results"]["important_features"])
-
-                st.markdown("#### 📖 Narrative Explanation")
-                st.markdown(item["narrative"])
-
-                st.markdown("---")
-
-
-            # =============================
-            # 2. LOAD & DISPLAY REPORT (TXT)
-            # =============================
-            report_response = requests.get(report_url)
-            report_text = report_response.text
-
-            st.text_area("Report", report_text, height=400)
-
-            # =============================
-            # 3. LOAD & DISPLAY PREDICTIONS CSV
-            # =============================
-            st.subheader("📊 Predictions Table (CSV)")
-
-            df = pd.read_csv(predictions_url)   # CSV bisa langsung load dari URL
-            st.dataframe(df)
-
-            st.success("Inference Completed!")
+    # if st.button("Proses Inference"):
+        
     
     
     

@@ -151,15 +151,15 @@ if st.session_state.inference_done:
     for item in explanations:
         st.markdown(f"### Claim ID: `{item['claim_id']}` — Prediction: **{item['prediction']}** ({item['confidence']*100:.1f}%)")
         
-        st.markdown("#### 🧠 Reasoning Trace")
-        for step in item["schema"]["reasoning_trace"]:
-            st.markdown(f"- {step}")
+        # st.markdown("#### 🧠 Reasoning Trace")
+        # for step in item["schema"]["reasoning_trace"]:
+        #     st.markdown(f"- {step}")
 
-        st.markdown("#### 🔗 Important Edges")
-        st.json(item["schema"]["explainer_results"]["important_edges"])
+        # st.markdown("#### 🔗 Important Edges")
+        # st.json(item["schema"]["explainer_results"]["important_edges"])
 
-        st.markdown("#### 🧩 Important Features")
-        st.json(item["schema"]["explainer_results"]["important_features"])
+        # st.markdown("#### 🧩 Important Features")
+        # st.json(item["schema"]["explainer_results"]["important_features"])
 
         st.markdown("#### 📖 Narrative Explanation")
         st.markdown(item["narrative"])

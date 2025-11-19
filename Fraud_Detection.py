@@ -4,7 +4,6 @@ import pandas as pd
 import requests
 import io
 from datetime import date
-from regions import PROVINCES
 import base64
 import altair as alt
 

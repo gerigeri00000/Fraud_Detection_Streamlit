@@ -6,7 +6,7 @@ from network_analysis import build_claim_graph, calculate_graph_risk
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:8000"
+API_BASE = st.secrets["API_BASE"]
 st.set_page_config(layout="wide", page_title="Network Analytics")
 
 st.title("🕸️ Fraud Network Analysis")
@@ -134,7 +134,7 @@ if uploaded:
             # kirim file dalam multipart/form-data
             files = {"file": (uploaded.name, uploaded.getvalue(), "text/csv")}
             try:
-                response = requests.post("http://127.0.0.1:8000/inference_graph", files=files)
+                response = requests.post(f"{API_BASE}/inference_graph", files=files)
             except Exception as e:
                 st.error(f"Request error: {e}")
                 st.stop()
@@ -146,9 +146,9 @@ if uploaded:
             result = response.json()
             print(result)
 
-            predictions_url = BASE_URL + result["predictions_url"]
-            explanations_url = BASE_URL + result["explanations_url"]
-            report_url = BASE_URL + result["report_url"]
+            predictions_url = API_BASE + result["predictions_url"]
+            explanations_url = API_BASE + result["explanations_url"]
+            report_url = API_BASE + result["report_url"]
 
             # =============================
             # 1. LOAD & DISPLAY EXPLANATIONS (JSON)

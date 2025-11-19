@@ -1,8 +1,5 @@
 streamlit
 pandas
 requests
-io
-datetime
-base64
 altair
 networkx

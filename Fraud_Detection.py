@@ -6,6 +6,7 @@ import io
 from datetime import date
 import base64
 import altair as alt
+import networkx as nx
 from network_analysis import build_claim_graph, calculate_graph_risk
 
 

@@ -8,7 +8,7 @@ def build_claim_graph(df: pd.DataFrame):
     G = nx.Graph()
 
     for _, row in df.iterrows():
-
+        claim_id = row['claim_id']
         participant = f"PTC_{row['participant_id']}"
         faskes = f"FSK_{row['faskes_id']}"
         # company = f"CMP_{row['company']}"
@@ -16,6 +16,7 @@ def build_claim_graph(df: pd.DataFrame):
         icd = f"ICD_{row['kode_icd10']}"
 
         # Tambahkan node
+        G.add_node(claim_id, type="claim")
         G.add_node(participant, type="participant")
         G.add_node(faskes, type="faskes")
         # G.add_node(company, type="company")
@@ -23,10 +24,12 @@ def build_claim_graph(df: pd.DataFrame):
         G.add_node(icd, type="icd")
 
         # Tambahkan edge (hubungan)
-        G.add_edge(participant, faskes, relation="visits")
-        # G.add_edge(participant, company, relation="employee_of")
         G.add_edge(faskes, dpjp, relation="doctor_in_charge")
-        G.add_edge(faskes, icd, relation="diagnosis")
+        # G.add_edge(participant, faskes, relation="visits")
+        G.add_edge(claim_id, participant, relation="filed_by")
+        G.add_edge(claim_id, dpjp, relation="attended_by")
+        # G.add_edge(participant, company, relation="employee_of")
+        G.add_edge(claim_id, icd, relation="diagnosis")
 
     return G
 

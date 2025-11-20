@@ -23,7 +23,7 @@ def load_regencies(province_code):
     res = requests.get(url).json()
     return res["data"]
  # in docker compose, backend service name
-API_BASE = st.secrets["API_BASE"]
+API_BASE = "http://localhost:8000" #st.secrets["API_BASE"]
 
 st.set_page_config(layout="wide", page_title="Fraud Triage Demo")
 

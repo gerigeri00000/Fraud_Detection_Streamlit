@@ -15,7 +15,7 @@ if "inference_results" not in st.session_state:
 if "df_uploaded" not in st.session_state:
     st.session_state.df_uploaded = None
 
-API_BASE = "http://localhost:8989" #st.secrets["API_BASE"]
+API_BASE = st.secrets["API_BASE"] #st.secrets["API_BASE"]"http://localhost:8989"
 st.set_page_config(layout="wide", page_title="Network Analytics")
 
 st.title("🕸️ Fraud Network Analysis")

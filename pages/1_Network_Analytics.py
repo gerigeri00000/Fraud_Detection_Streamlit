@@ -54,6 +54,7 @@ if uploaded and not st.session_state.inference_done:
 
     df = pd.read_csv(uploaded)
     st.session_state.df_uploaded = df
+    
 
     st.subheader("📄 Preview Data")
     st.dataframe(df.head())
@@ -76,6 +77,8 @@ if uploaded and not st.session_state.inference_done:
 
         # Simpan hasil
         result = response.json()
+        predictions_url = API_BASE + "/" + result["predictions_url"]
+        df_match = pd.read_csv(predictions_url) 
         st.session_state.inference_results = result
         st.session_state.inference_done = True
 
@@ -84,6 +87,11 @@ if uploaded and not st.session_state.inference_done:
 if st.session_state.inference_done:
 
     df = st.session_state.df_uploaded
+    df = df.merge(
+        df_match[['claim_id', 'fraud_prediction']], 
+        on='claim_id', 
+        how='left'
+    )
     result = st.session_state.inference_results
 
     # Opsi untuk memilih Faskes ID
@@ -128,6 +136,9 @@ if st.session_state.inference_done:
             # Menambahkan node ke dalam visualisasi
             for node, data in subG.nodes(data=True):
                 node_type = data.get("type", "")
+                fraud = data.get("fraud", 0)  # Ambil nilai fraud dari node (claim)
+
+                # Menentukan warna dan simbol berdasarkan jenis node dan fraud
                 if node_type == "faskes":
                     color, shape, size = "#ff6666", "dot", 20
                 elif node_type == "participant":
@@ -137,7 +148,11 @@ if st.session_state.inference_done:
                 elif node_type == "icd":
                     color, shape, size = "#ffcc66", "triangle", 14
                 elif node_type == "claim":
-                    color, shape, size = "#ff99ff", "star", 18
+                    # Jika fraud_prediction == 1, set warna hitam dan bentuk simbol khusus
+                    if fraud == 1:
+                        color, shape, size = "black", "star", 18
+                    else:
+                        color, shape, size = "#ff99ff", "star", 18
                 else:
                     color, shape, size = "#cccccc", "dot", 8
 
@@ -154,8 +169,8 @@ if st.session_state.inference_done:
     # =============================
     # LOAD RESULTS (Tidak POST ulang)
     # =============================
-    predictions_url = API_BASE + result["predictions_url"]
-    explanations_url = API_BASE + result["explanations_url"]
+    predictions_url = API_BASE + "/" + result["predictions_url"]
+    explanations_url = API_BASE +"/" + result["explanations_url"]
     # report_url       = API_BASE + result["report_url"]
 
     st.subheader("📌 Explanation Results")

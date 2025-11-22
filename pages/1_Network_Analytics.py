@@ -14,6 +14,9 @@ if "inference_results" not in st.session_state:
 
 if "df_uploaded" not in st.session_state:
     st.session_state.df_uploaded = None
+    
+if "predictions_url" not in st.session_state:
+    st.session_state.predictions_url = None
 
 API_BASE = st.secrets["API_BASE"] #st.secrets["API_BASE"]"http://localhost:8989"
 st.set_page_config(layout="wide", page_title="Network Analytics")

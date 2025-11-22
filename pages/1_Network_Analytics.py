@@ -48,7 +48,7 @@ def safe_read_csv(file):
 
 
 uploaded = st.file_uploader("Upload file CSV klaim", type=["csv"])
-predictions_url = None
+
 if uploaded and not st.session_state.inference_done:
 
     st.write("File uploaded:", uploaded.name)
@@ -79,7 +79,11 @@ if uploaded and not st.session_state.inference_done:
         # Simpan hasil
         result = response.json()
         predictions_url = API_BASE + "/" + result["predictions_url"]
+        st.session_state.predictions_url = predictions_url
+        
         df_match = pd.read_csv(predictions_url) 
+        st.session_state.df_match = df_match
+        
         st.session_state.inference_results = result
         st.session_state.inference_done = True
 
@@ -88,7 +92,8 @@ if uploaded and not st.session_state.inference_done:
 if st.session_state.inference_done:
 
     df = st.session_state.df_uploaded
-    df_match = pd.read_csv(predictions_url) 
+    predictions_url = st.session_state.predictions_url  # ✅ ambil dari session_state
+    df_match =  st.session_state.get("df_match") 
     df = df.merge(
         df_match[['claim_id', 'fraud_prediction']], 
         on='claim_id', 

@@ -87,6 +87,7 @@ if uploaded and not st.session_state.inference_done:
 if st.session_state.inference_done:
 
     df = st.session_state.df_uploaded
+    df_match = pd.read_csv(predictions_url) 
     df = df.merge(
         df_match[['claim_id', 'fraud_prediction']], 
         on='claim_id', 

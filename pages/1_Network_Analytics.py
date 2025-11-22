@@ -48,6 +48,7 @@ def safe_read_csv(file):
 
 
 uploaded = st.file_uploader("Upload file CSV klaim", type=["csv"])
+predictions_url = None
 if uploaded and not st.session_state.inference_done:
 
     st.write("File uploaded:", uploaded.name)
